@@ -44,44 +44,47 @@
         @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 60% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
         .leaflet-tooltip { font-family: 'Noto Sans KR', sans-serif; font-weight: bold; font-size: 13px; border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.2); border-radius: 8px; }
         .custom-marker { transition: transform 0.2s; }
-        .weather-scroll { scroll-snap-type: x mandatory; }
-        .weather-card { scroll-snap-align: start; }
+        .weather-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0.375rem; }
+        .weather-card { min-width: 0; }
+        .esg-stat-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.375rem; }
 
         @media print {
-            @page { size: A4 portrait; margin: 12mm 10mm; }
-            body { background-color: #fff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            @page { size: A4 portrait; margin: 10mm 8mm; }
+            body { background-color: #fff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-size: 10pt; }
             .print\:hidden { display: none !important; }
-            #print-area { display: block !important; width: 100%; color: #1e293b; font-family: 'Noto Sans KR', sans-serif; }
-            .print-page-container { width: 100%; margin: 0; padding: 0; }
-            .print-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid var(--tm); padding-bottom: 8px; margin-bottom: 15px; }
-            .print-header .logo img { height: 32px; object-fit: contain; }
-            .print-header .doc-info { text-align: right; font-size: 11px; color: #475569; }
-            .print-title-section { text-align: center; margin-bottom: 15px; }
-            .print-title-section h1 { font-size: 20px; font-weight: 700; color: #0f172a; margin: 0; }
-            .print-overview-slim { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 6px 14px; background: #f8fafc; border: 1px solid #94a3b8; border-radius: 6px; padding: 8px 12px; margin-bottom: 15px; font-size: 12.5px; word-break: keep-all; }
-            .print-overview-item { display: flex; gap: 8px; align-items: flex-start; min-width: 0; }
+            #print-area { display: block !important; width: 100%; max-width: 100%; color: #1e293b; font-family: 'Noto Sans KR', sans-serif; box-sizing: border-box; }
+            .print-page-container { width: 100%; max-width: 100%; margin: 0; padding: 0; box-sizing: border-box; overflow: hidden; }
+            .print-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid var(--tm); padding-bottom: 6px; margin-bottom: 10px; }
+            .print-header .logo img { height: 28px; object-fit: contain; }
+            .print-header .doc-info { text-align: right; font-size: 10px; color: #475569; line-height: 1.35; }
+            .print-title-section { text-align: center; margin-bottom: 10px; }
+            .print-title-section h1 { font-size: 18px; font-weight: 700; color: #0f172a; margin: 0; line-height: 1.35; }
+            .print-overview-slim { display: grid; grid-template-columns: 1fr 1fr; gap: 5px 10px; background: #f8fafc; border: 1px solid #94a3b8; border-radius: 6px; padding: 7px 10px; margin-bottom: 10px; font-size: 11.5px; word-break: keep-all; }
+            .print-overview-item { display: flex; gap: 6px; align-items: flex-start; min-width: 0; line-height: 1.45; }
             .print-overview-item.print-overview-wide { grid-column: 1 / -1; }
-            .print-overview-slim .label { font-weight: 700; color: var(--tm); white-space: nowrap; flex-shrink: 0; }
+            .print-overview-slim .label { font-weight: 700; color: var(--tm); white-space: nowrap; flex-shrink: 0; min-width: 3.2em; }
+            .print-overview-slim .value { min-width: 0; }
             .print-nowrap { white-space: nowrap; }
-            .print-table { width: 100%; border-collapse: collapse; table-layout: fixed; margin-bottom: 15px; font-size: 12px; border: 2px solid #1e293b; }
-            .print-table th, .print-table td { border: 1px solid #1e293b; padding: 6px 8px; vertical-align: top; page-break-inside: avoid; word-break: keep-all; }
-            .print-table th { background: #f8fafc !important; font-weight: 700; text-align: center; border-bottom: 2px solid #1e293b; }
-            .print-col-date { width: 10%; text-align: center; font-weight: 700; vertical-align: middle; background: #f8fafc; }
-            .print-col-desc { width: 78%; }
-            .print-col-meal { width: 12%; text-align: center; vertical-align: middle; }
+            .print-table { width: 100%; border-collapse: collapse; table-layout: fixed; margin-bottom: 10px; font-size: 11px; border: 2px solid #1e293b; }
+            .print-table th, .print-table td { border: 1px solid #1e293b; padding: 5px 6px; vertical-align: top; page-break-inside: avoid; word-break: keep-all; overflow-wrap: break-word; line-height: 1.4; }
+            .print-table th { background: #f8fafc !important; font-weight: 700; text-align: center; border-bottom: 2px solid #1e293b; font-size: 11px; }
+            .print-col-date { width: 9%; text-align: center; font-weight: 700; vertical-align: middle; background: #f8fafc; }
+            .print-col-desc { width: 79%; }
+            .print-col-meal { width: 12%; text-align: left; vertical-align: middle; padding-left: 4px; padding-right: 4px; }
             .print-day-divider td { border-top: 2px solid #1e293b !important; }
-            .print-desc-list { list-style: none; margin: 4px 0 8px 0; padding-left: 5px; }
-            .print-desc-list li { position: relative; padding-left: 12px; margin-bottom: 3px; line-height: 1.4; }
-            .print-desc-list li::before { content: '■'; font-size: 8px; position: absolute; left: 0; top: 3px; color: var(--tm); }
+            .print-desc-list { list-style: none; margin: 3px 0 6px 0; padding-left: 4px; }
+            .print-desc-list li { position: relative; padding-left: 11px; margin-bottom: 2px; line-height: 1.4; }
+            .print-desc-list li::before { content: '■'; font-size: 7px; position: absolute; left: 0; top: 4px; color: var(--tm); }
             .print-highlight { font-weight: 700; color: var(--tm); }
-            .print-hotel-divider { border: 0; border-top: 1px dashed #94a3b8; margin: 8px 0 6px 0; }
-            .print-hotel-info { font-size: 12px; font-weight: 700; }
-            .print-meal-wrapper { display: flex; flex-direction: column; gap: 6px; }
-            .print-meal-simple { display: flex; gap: 2px; font-size: 11.5px; line-height: 1.35; }
-            .print-meal-simple strong { color: var(--tm); width: 14px; flex-shrink: 0; }
-            .print-remarks { font-size: 11px; color: #475569; text-align: right; margin-bottom: 10px; }
-            .print-footer-box { margin-top: 10px; padding-top: 10px; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; }
-            .print-manager-info { border-left: 3px solid var(--tm); padding-left: 10px; font-size: 12.5px; font-weight: 700; }
+            .print-hotel-divider { border: 0; border-top: 1px dashed #94a3b8; margin: 6px 0 5px 0; }
+            .print-hotel-info { font-size: 11px; font-weight: 700; line-height: 1.4; }
+            .print-meal-wrapper { display: flex; flex-direction: column; gap: 4px; }
+            .print-meal-simple { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 2px 3px; font-size: 10.5px; line-height: 1.35; }
+            .print-meal-simple strong { color: var(--tm); flex-shrink: 0; white-space: nowrap; }
+            .print-meal-menu { word-break: keep-all; line-height: 1.35; }
+            .print-remarks { font-size: 10px; color: #475569; text-align: left; line-height: 1.45; margin-bottom: 8px; word-break: keep-all; }
+            .print-footer-box { margin-top: 8px; padding-top: 8px; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; }
+            .print-manager-info { border-left: 3px solid var(--tm); padding-left: 8px; font-size: 11px; font-weight: 700; line-height: 1.4; word-break: keep-all; }
         }
     </style>
 </head>
@@ -107,7 +110,7 @@
                 </div>
                 <div class="print-overview-item print-overview-wide">
                     <span class="label">행사조건</span>
-                    <span class="value"><span class="print-nowrap">전국 각지 개별 항공</span> · <span class="print-nowrap">10/16 제주공항 집합</span> · 3일차 <span class="print-nowrap">각자 공항 이동·귀가</span> (현지비용 최소화)</span>
+                    <span class="value">전국 각지 개별 항공 · 10/16 제주공항 집합 · 3일차 각자 공항 이동·귀가 (현지비용 최소화)</span>
                 </div>
                 <div class="print-overview-item print-overview-wide">
                     <span class="label">숙소</span>
@@ -124,7 +127,7 @@
                 </thead>
                 <tbody>
                     <tr class="print-day-divider">
-                        <td class="print-col-date"><strong class="print-nowrap">1일차</strong><br><span class="print-nowrap">10/16 (금)</span></td>
+                        <td class="print-col-date"><strong>1일차</strong><br>10/16<br>(금)</td>
                         <td class="print-col-desc">
                             <ul class="print-desc-list">
                                 <li>전국 각지에서 <span class="print-highlight">개별 항공편</span>으로 제주공항 집합 (10/16)</li>
@@ -138,14 +141,14 @@
                         </td>
                         <td class="print-col-meal">
                             <div class="print-meal-wrapper">
-                                <div class="print-meal-simple"><strong>조:</strong><span>-</span></div>
-                                <div class="print-meal-simple"><strong>중:</strong><span>자체</span></div>
-                                <div class="print-meal-simple"><strong>석:</strong><span>자체</span></div>
+                                <div class="print-meal-simple"><strong>조:</strong><span class="print-meal-menu">-</span></div>
+                                <div class="print-meal-simple"><strong>중:</strong><span class="print-meal-menu">자체</span></div>
+                                <div class="print-meal-simple"><strong>석:</strong><span class="print-meal-menu">자체</span></div>
                             </div>
                         </td>
                     </tr>
                     <tr class="print-day-divider">
-                        <td class="print-col-date"><strong class="print-nowrap">2일차</strong><br><span class="print-nowrap">10/17 (토)</span></td>
+                        <td class="print-col-date"><strong>2일차</strong><br>10/17<br>(토)</td>
                         <td class="print-col-desc">
                             <ul class="print-desc-list">
                                 <li>호텔 조식 후 관광 출발</li>
@@ -159,14 +162,14 @@
                         </td>
                         <td class="print-col-meal">
                             <div class="print-meal-wrapper">
-                                <div class="print-meal-simple"><strong>조:</strong><span class="print-nowrap">호텔식(포함)</span></div>
-                                <div class="print-meal-simple"><strong>중:</strong><span>자체</span></div>
-                                <div class="print-meal-simple"><strong>석:</strong><span>자체</span></div>
+                                <div class="print-meal-simple"><strong>조:</strong><span class="print-meal-menu">호텔식<br>(포함)</span></div>
+                                <div class="print-meal-simple"><strong>중:</strong><span class="print-meal-menu">자체</span></div>
+                                <div class="print-meal-simple"><strong>석:</strong><span class="print-meal-menu">자체</span></div>
                             </div>
                         </td>
                     </tr>
                     <tr class="print-day-divider">
-                        <td class="print-col-date"><strong class="print-nowrap">3일차</strong><br><span class="print-nowrap">10/18 (일)</span></td>
+                        <td class="print-col-date"><strong>3일차</strong><br>10/18<br>(일)</td>
                         <td class="print-col-desc">
                             <ul class="print-desc-list">
                                 <li>호텔 조식 후 <span class="print-highlight">각자 알아서</span> 제주공항 이동</li>
@@ -175,9 +178,9 @@
                         </td>
                         <td class="print-col-meal">
                             <div class="print-meal-wrapper">
-                                <div class="print-meal-simple"><strong>조:</strong><span class="print-nowrap">호텔식(포함)</span></div>
-                                <div class="print-meal-simple"><strong>중:</strong><span>-</span></div>
-                                <div class="print-meal-simple"><strong>석:</strong><span>-</span></div>
+                                <div class="print-meal-simple"><strong>조:</strong><span class="print-meal-menu">호텔식<br>(포함)</span></div>
+                                <div class="print-meal-simple"><strong>중:</strong><span class="print-meal-menu">-</span></div>
+                                <div class="print-meal-simple"><strong>석:</strong><span class="print-meal-menu">-</span></div>
                             </div>
                         </td>
                     </tr>
@@ -190,7 +193,7 @@
                 ※ 국내선 탑승 시 신분증 원본 지참이 필요합니다.
             </div>
             <div class="print-footer-box">
-                <div class="print-manager-info">담당 및 진행 : 대표 이재명 010-9443-7881 · [System Powered by TOURMAKER]</div>
+                <div class="print-manager-info">담당 및 진행 : 대표 이재명<br>010-9443-7881 · [System Powered by TOURMAKER]</div>
             </div>
         </div>
     </div>
@@ -453,23 +456,23 @@
         </div>
     </section>
 
-    <section id="weather-esg" class="py-16 bg-white border-t border-slate-100">
-        <div class="container mx-auto px-4 max-w-6xl">
-            <h2 class="text-2xl font-bold text-center font-title mb-8">🌦️ 날씨 &amp; ESG</h2>
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="bg-blue-50 p-6 rounded-2xl border border-blue-100">
-                    <h3 class="font-bold text-blue-900 mb-4"><i class="fa-solid fa-cloud-sun mr-1"></i> 제주 7일 날씨</h3>
-                    <div id="weather-container" class="flex overflow-x-auto weather-scroll gap-3 no-scrollbar pb-2"><div class="text-sm text-slate-500">불러오는 중...</div></div>
-                    <p class="text-sm text-slate-600 mt-4 bg-white p-3 rounded-lg border border-blue-100"><i class="fa-solid fa-shirt text-blue-500 mr-1"></i>10월 제주는 낮과 밤 일교차가 있습니다. 얇은 겉옷·편한 운동화·우산을 챙기세요.</p>
+    <section id="weather-esg" class="py-8 md:py-12 bg-white border-t border-slate-100">
+        <div class="container mx-auto px-4 max-w-lg md:max-w-2xl">
+            <h2 class="text-xl font-bold text-center font-title mb-4">🌦️ 날씨 &amp; ESG</h2>
+            <div class="bg-slate-50 rounded-2xl border border-slate-200 p-4 space-y-4">
+                <div>
+                    <h3 class="text-sm font-bold text-blue-900 mb-2"><i class="fa-solid fa-cloud-sun mr-1"></i> 제주 5일 날씨</h3>
+                    <div id="weather-container" class="weather-grid"><div class="col-span-5 text-sm text-slate-500 text-center py-2">불러오는 중...</div></div>
+                    <p class="text-[11px] text-slate-600 mt-2 leading-snug bg-white p-2 rounded-lg border border-blue-100"><i class="fa-solid fa-shirt text-blue-500 mr-1"></i>10월 제주는 일교차가 큽니다. 얇은 겉옷·편한 운동화·우산을 챙기세요.</p>
                 </div>
-                <div class="bg-green-50 p-6 rounded-2xl border border-green-100">
-                    <h3 class="font-bold text-green-900 mb-4"><i class="fa-solid fa-leaf mr-1"></i> ESG 실천</h3>
-                    <div class="grid grid-cols-3 gap-2 text-center mb-4">
-                        <div class="bg-white p-3 rounded-xl border border-green-100"><p class="text-xs text-slate-500">종이 절감</p><p class="font-black text-green-700" id="esg-paper">0장</p></div>
-                        <div class="bg-white p-3 rounded-xl border border-green-100"><p class="text-xs text-slate-500">탄소 감소</p><p class="font-black text-slate-700" id="esg-carbon">0g</p></div>
-                        <div class="bg-white p-3 rounded-xl border border-green-100"><p class="text-xs text-slate-500">물 절약</p><p class="font-black text-blue-700" id="esg-water">0L</p></div>
+                <div class="border-t border-slate-200 pt-3">
+                    <h3 class="text-sm font-bold text-green-900 mb-2"><i class="fa-solid fa-leaf mr-1"></i> ESG 실천</h3>
+                    <div class="esg-stat-grid text-center mb-2">
+                        <div class="bg-white p-2 rounded-lg border border-green-100"><p class="text-[10px] text-slate-500">종이 절감</p><p class="text-sm font-black text-green-700" id="esg-paper">0장</p></div>
+                        <div class="bg-white p-2 rounded-lg border border-green-100"><p class="text-[10px] text-slate-500">탄소 감소</p><p class="text-sm font-black text-slate-700" id="esg-carbon">0g</p></div>
+                        <div class="bg-white p-2 rounded-lg border border-green-100"><p class="text-[10px] text-slate-500">물 절약</p><p class="text-sm font-black text-blue-700" id="esg-water">0L</p></div>
                     </div>
-                    <p class="text-xs text-slate-600 bg-white p-3 rounded-lg border border-green-100" id="esg-desc">계산 중...</p>
+                    <p class="text-[11px] text-slate-600 leading-snug bg-white p-2 rounded-lg border border-green-100" id="esg-desc">계산 중...</p>
                 </div>
             </div>
         </div>
@@ -573,10 +576,10 @@
                 const data = await res.json();
                 const codes = {0:'☀️',1:'🌤️',2:'⛅',3:'☁️',61:'🌧️',63:'🌧️',80:'🌦️',95:'⛈️'};
                 let html = '';
-                for (let i = 0; i < 7; i++) {
+                for (let i = 0; i < 5; i++) {
                     const d = new Date(data.daily.time[i]);
                     const day = ['일','월','화','수','목','금','토'][d.getDay()];
-                    html += `<div class="weather-card shrink-0 bg-white p-3 rounded-xl border border-blue-100 text-center w-24"><p class="text-xs font-bold text-slate-500">${d.getMonth()+1}/${d.getDate()} (${day})</p><div class="text-2xl my-1">${codes[data.daily.weathercode[i]] || '☁️'}</div><p class="text-[11px] font-bold"><span class="text-blue-500">${Math.round(data.daily.temperature_2m_min[i])}°</span> | <span class="text-red-500">${Math.round(data.daily.temperature_2m_max[i])}°</span></p></div>`;
+                    html += `<div class="weather-card bg-white p-1.5 rounded-lg border border-blue-100 text-center"><p class="text-[10px] font-bold text-slate-500 leading-tight">${d.getMonth()+1}/${d.getDate()}</p><p class="text-[9px] text-slate-400 leading-none mb-0.5">(${day})</p><div class="text-lg leading-none my-0.5">${codes[data.daily.weathercode[i]] || '☁️'}</div><p class="text-[10px] font-bold leading-tight"><span class="text-blue-500">${Math.round(data.daily.temperature_2m_min[i])}°</span><span class="text-slate-300">/</span><span class="text-red-500">${Math.round(data.daily.temperature_2m_max[i])}°</span></p></div>`;
                 }
                 c.innerHTML = html;
             } catch (e) { c.innerHTML = '<p class="text-sm text-red-500">날씨 로드 실패</p>'; }

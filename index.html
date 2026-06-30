@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="ko" class="scroll-smooth">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JLH9GD9SVR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-JLH9GD9SVR');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[투어메이커] 동창모임 제주 2박 3일 - 스마트 가이드</title>
+
+    <meta name="description" content="동창모임 제주 2박 3일 여행 안내 초안. 우도·새별오름·이호테우·오설록과 제주 미식을 담은 스마트 가이드북입니다.">
+    <meta property="og:title" content="🌴 [동창모임] 제주 2박 3일 스마트 가이드북">
+    <meta property="og:description" content="2026.10.16~18 제주 동창 여행 일정·동선·준비물을 한눈에 확인하세요.">
+    <meta property="og:image" content="https://indadady.github.io/261016_Jeju/assets/images/og-thumb.jpg">
+    <meta property="og:image:width" content="1920">
+    <meta property="og:image:height" content="1272">
+    <meta property="og:image:alt" content="제주 이호테우 말등대 대표 전경">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Jua&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+
+    <style>
+        :root { --tm: #004098; --tm-dark: #002d6b; }
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f8fafc; color: #1e293b; }
+        .font-title { font-family: 'Jua', sans-serif; }
+        .hero-bg {
+            background: linear-gradient(rgba(0, 30, 60, 0.45), rgba(0, 0, 0, 0.65)), url('assets/images/hero.jpg');
+            background-size: cover; background-position: center; background-attachment: fixed;
+        }
+        @media (max-width: 768px){ .hero-bg { background-attachment: scroll; } }
+        #map { height: 500px; width: 100%; border-radius: 1rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .animate-fade-in-up { animation: fadeInUp 0.8s ease-out forwards; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        section { scroll-margin-top: 80px; }
+        @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 60% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+        .leaflet-tooltip { font-family: 'Noto Sans KR', sans-serif; font-weight: bold; font-size: 13px; border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.2); border-radius: 8px; }
+        .custom-marker { transition: transform 0.2s; }
+        .weather-scroll { scroll-snap-type: x mandatory; }
+        .weather-card { scroll-snap-align: start; }
+
+        @media print {
+            @page { size: A4 portrait; margin: 12mm 10mm; }
+            body { background-color: #fff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .print\:hidden { display: none !important; }
+            #print-area { display: block !important; width: 100%; color: #1e293b; font-family: 'Noto Sans KR', sans-serif; }
+            .print-page-container { width: 100%; margin: 0; padding: 0; }
+            .print-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid var(--tm); padding-bottom: 8px; margin-bottom: 15px; }
+            .print-header .logo img { height: 32px; object-fit: contain; }
+            .print-header .doc-info { text-align: right; font-size: 11px; color: #475569; }
+            .print-title-section { text-align: center; margin-bottom: 15px; }
+            .print-title-section h1 { font-size: 20px; font-weight: 700; color: #0f172a; margin: 0; }
+            .print-overview-slim { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 6px 14px; background: #f8fafc; border: 1px solid #94a3b8; border-radius: 6px; padding: 8px 12px; margin-bottom: 15px; font-size: 12.5px; word-break: keep-all; }
+            .print-overview-item { display: flex; gap: 8px; align-items: flex-start; min-width: 0; }
+            .print-overview-item.print-overview-wide { grid-column: 1 / -1; }
+            .print-overview-slim .label { font-weight: 700; color: var(--tm); white-space: nowrap; flex-shrink: 0; }
+            .print-nowrap { white-space: nowrap; }
+            .print-table { width: 100%; border-collapse: collapse; table-layout: fixed; margin-bottom: 15px; font-size: 12px; border: 2px solid #1e293b; }
+            .print-table th, .print-table td { border: 1px solid #1e293b; padding: 6px 8px; vertical-align: top; page-break-inside: avoid; word-break: keep-all; }
+            .print-table th { background: #f8fafc !important; font-weight: 700; text-align: center; border-bottom: 2px solid #1e293b; }
+            .print-col-date { width: 10%; text-align: center; font-weight: 700; vertical-align: middle; background: #f8fafc; }
+            .print-col-desc { width: 78%; }
+            .print-col-meal { width: 12%; text-align: center; vertical-align: middle; }
+            .print-day-divider td { border-top: 2px solid #1e293b !important; }
+            .print-desc-list { list-style: none; margin: 4px 0 8px 0; padding-left: 5px; }
+            .print-desc-list li { position: relative; padding-left: 12px; margin-bottom: 3px; line-height: 1.4; }
+            .print-desc-list li::before { content: '■'; font-size: 8px; position: absolute; left: 0; top: 3px; color: var(--tm); }
+            .print-highlight { font-weight: 700; color: var(--tm); }
+            .print-hotel-divider { border: 0; border-top: 1px dashed #94a3b8; margin: 8px 0 6px 0; }
+            .print-hotel-info { font-size: 12px; font-weight: 700; }
+            .print-meal-wrapper { display: flex; flex-direction: column; gap: 6px; }
+            .print-meal-simple { display: flex; gap: 2px; font-size: 11.5px; line-height: 1.35; }
+            .print-meal-simple strong { color: var(--tm); width: 14px; flex-shrink: 0; }
+            .print-remarks { font-size: 11px; color: #475569; text-align: right; margin-bottom: 10px; }
+            .print-footer-box { margin-top: 10px; padding-top: 10px; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; }
+            .print-manager-info { border-left: 3px solid var(--tm); padding-left: 10px; font-size: 12.5px; font-weight: 700; }
+        }
+    </style>
+</head>
+<body class="antialiased pb-20 md:pb-0">
+
+    <div id="print-area" class="hidden print:block w-full bg-white text-black py-2">
+        <div class="print-page-container">
+            <div class="print-header">
+                <div class="logo"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgHfgIX70O5k6Anuo0UgALIdaG9jSga9auHu3uyz0uEirylGPAJnjN_qQbvEGMUvPqUQf_g9FMNUHRxlDcUBf4vZ3Mpy4TnA9WxbmzWYK11gt2zuy_Irl4wctNFjcjLyPo0GPXV792o_J7L9guRMuDfeC1gy7USwywjYbECZgzcsHybuGRRAXAnO1eNmP8/s320/logo.png" alt="Tourmaker"></div>
+                <div class="doc-info">문서번호: TM-261016-REUNION<br>발송일자: 2026. 06. 30</div>
+            </div>
+            <div class="print-title-section">
+                <h1>동창모임 제주 2박 3일 여행 일정표</h1>
+            </div>
+            <div class="print-overview-slim">
+                <div class="print-overview-item">
+                    <span class="label">행사기간</span>
+                    <span class="value"><span class="print-nowrap">2026. 10. 16 (금) ~ 10. 18 (일)</span></span>
+                </div>
+                <div class="print-overview-item">
+                    <span class="label">여행인원</span>
+                    <span class="value"><span class="print-nowrap">25명 기준</span></span>
+                </div>
+                <div class="print-overview-item print-overview-wide">
+                    <span class="label">숙소</span>
+                    <span class="value"><span class="print-nowrap">노블레스관광호텔</span> · 국내선 이용 (항공편·집결시간 별도 안내)</span>
+                </div>
+            </div>
+            <table class="print-table">
+                <thead>
+                    <tr>
+                        <th class="print-col-date">일자</th>
+                        <th class="print-col-desc">상세 탐방 일정 및 동선 점검</th>
+                        <th class="print-col-meal">식사</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="print-day-divider">
+                        <td class="print-col-date"><strong class="print-nowrap">1일차</strong><br><span class="print-nowrap">10/16 (금)</span></td>
+                        <td class="print-col-desc">
+                            <ul class="print-desc-list">
+                                <li>공항 도착 및 탑승수속 · 국내선 출발</li>
+                                <li>제주공항 도착 및 <span class="print-highlight">기사님 미팅</span></li>
+                                <li><span class="print-highlight">이호테우 말등대</span> &amp; <span class="print-highlight">무지개해안도로</span> (인생샷)</li>
+                                <li><span class="print-highlight">오설록 녹차밭</span> 관광</li>
+                                <li><span class="print-highlight">새별오름</span> (억새로 유명한 오름)</li>
+                            </ul>
+                            <hr class="print-hotel-divider">
+                            <div class="print-hotel-info">🏨 호텔 : 노블레스관광호텔 체크인</div>
+                        </td>
+                        <td class="print-col-meal">
+                            <div class="print-meal-wrapper">
+                                <div class="print-meal-simple"><strong>조:</strong><span>-</span></div>
+                                <div class="print-meal-simple"><strong>중:</strong><span><span class="print-nowrap">흑우불고기정식</span> 등</span></div>
+                                <div class="print-meal-simple"><strong>석:</strong><span class="print-nowrap">회정식</span></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="print-day-divider">
+                        <td class="print-col-date"><strong class="print-nowrap">2일차</strong><br><span class="print-nowrap">10/17 (토)</span></td>
+                        <td class="print-col-desc">
+                            <ul class="print-desc-list">
+                                <li>호텔 조식 후 관광 출발</li>
+                                <li><span class="print-highlight">우도 8경</span> (섬 속의 섬, 선박료 포함) &amp; 우도 내 자유시간</li>
+                                <li><span class="print-highlight">오조포구</span> 둘레길 (드라마 &lt;웰컴투삼달리&gt; 촬영지)</li>
+                                <li><span class="print-highlight">아로마족욕 또는 한방족욕</span> 택 1</li>
+                                <li>숙소 도착 및 자유시간</li>
+                            </ul>
+                            <hr class="print-hotel-divider">
+                            <div class="print-hotel-info">🏨 호텔 : 노블레스관광호텔 연박</div>
+                        </td>
+                        <td class="print-col-meal">
+                            <div class="print-meal-wrapper">
+                                <div class="print-meal-simple"><strong>조:</strong><span class="print-nowrap">호텔식</span></div>
+                                <div class="print-meal-simple"><strong>중:</strong><span>자체</span></div>
+                                <div class="print-meal-simple"><strong>석:</strong><span class="print-nowrap">흑돼지구이 1인분</span></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="print-day-divider">
+                        <td class="print-col-date"><strong class="print-nowrap">3일차</strong><br><span class="print-nowrap">10/18 (일)</span></td>
+                        <td class="print-col-desc">
+                            <ul class="print-desc-list">
+                                <li>호텔 조식 후 자체 공항 이동</li>
+                                <li>제주공항 출발 · 도착 공항 이동 후 해산</li>
+                            </ul>
+                        </td>
+                        <td class="print-col-meal">
+                            <div class="print-meal-wrapper">
+                                <div class="print-meal-simple"><strong>조:</strong><span class="print-nowrap">호텔식</span></div>
+                                <div class="print-meal-simple"><strong>중:</strong><span>-</span></div>
+                                <div class="print-meal-simple"><strong>석:</strong><span>-</span></div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="print-remarks">
+                ※ 상기 일정은 항공기 연발착 및 현지 기상 사정에 따라 다소 변경될 수 있습니다.<br>
+                ※ 국내선 탑승 시 신분증 원본 지참이 필요합니다.
+            </div>
+            <div class="print-footer-box">
+                <div class="print-manager-info">담당 및 진행 : 대표 이재명 010-9443-7881 · [System Powered by TOURMAKER]</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="print:hidden">
+    <header class="bg-white/95 backdrop-blur-md shadow-md sticky top-0 z-50">
+        <nav class="container mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3 shrink-0">
+                <a href="http://tourmaker.kr" target="_blank"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgHfgIX70O5k6Anuo0UgALIdaG9jSga9auHu3uyz0uEirylGPAJnjN_qQbvEGMUvPqUQf_g9FMNUHRxlDcUBf4vZ3Mpy4TnA9WxbmzWYK11gt2zuy_Irl4wctNFjcjLyPo0GPXV792o_J7L9guRMuDfeC1gy7USwywjYbECZgzcsHybuGRRAXAnO1eNmP8/s320/logo.png" alt="Tourmaker" class="h-8"></a>
+                <span id="d-day-badge" class="hidden bg-[#004098] text-white text-[10px] px-2 py-0.5 rounded-full font-bold animate-pulse"></span>
+            </div>
+            <div class="flex-1 overflow-x-auto no-scrollbar ml-4">
+                <div class="flex items-center space-x-1 md:space-x-5 whitespace-nowrap pr-4 text-sm font-bold">
+                    <a href="#home" class="px-3 py-2 text-slate-600 hover:text-[#004098]">홈</a>
+                    <a href="#highlights" class="px-3 py-2 text-[#004098]"><i class="fa-solid fa-star text-amber-400 mr-1"></i>포인트</a>
+                    <a href="#preview" class="px-3 py-2 text-slate-600 hover:text-[#004098]">제주미리보기</a>
+                    <a href="#safety" class="px-3 py-2 text-slate-600 hover:text-[#004098]">탑승안내</a>
+                    <a href="#map-section" class="px-3 py-2 text-slate-600 hover:text-[#004098]">여행동선</a>
+                    <a href="#schedule" class="px-3 py-2 text-[#004098]"><i class="fa-solid fa-calendar-check mr-1"></i>세부일정</a>
+                    <a href="#hotel" class="px-3 py-2 text-slate-600 hover:text-[#004098]">숙소</a>
+                    <a href="#check" class="px-3 py-2 text-slate-600 hover:text-[#004098]">준비물</a>
+                    <a href="#contact" class="px-3 py-2 text-slate-600 hover:text-[#004098]">연락망</a>
+                </div>
+            </div>
+            <button onclick="shareLink()" class="shrink-0 p-2 text-slate-500 hover:text-[#004098]"><i class="fa-solid fa-share-nodes text-xl"></i></button>
+        </nav>
+    </header>
+
+    <section id="home" class="hero-bg min-h-[60vh] flex items-center justify-center text-center px-4">
+        <div class="animate-fade-in-up text-white max-w-3xl">
+            <span class="bg-[#004098]/90 px-6 py-2 rounded-full text-lg font-bold mb-6 inline-block border border-white/20 font-title">🤝 동창모임 제주 여행</span>
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 drop-shadow-lg font-title">오래된 인연,<br><span class="text-amber-300">가을 제주</span>에서 다시 만나요</h1>
+            <p id="hero-date" class="text-xl font-bold mb-2">2026. 10. 16 (금) ~ 10. 18 (일) · 2박 3일</p>
+            <p id="hero-desc" class="text-slate-200 text-sm md:text-base">25명 동창 여행 · 우도·새별오름·이호테우·오설록과 제주 미식</p>
+        </div>
+    </section>
+
+    <section id="highlights" class="py-12 bg-white -mt-8 rounded-t-3xl relative z-10 shadow-[0_-5px_20px_rgba(0,0,0,0.08)]">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-10">
+                <span class="text-[#004098] font-black tracking-widest text-xs uppercase">Special Points</span>
+                <h2 class="text-2xl md:text-3xl font-bold mt-2 font-title">이번 동창 여행 3가지 포인트</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+                <div class="bg-amber-50 p-6 rounded-2xl border border-amber-100 shadow-sm">
+                    <div class="text-3xl mb-4">🌾</div>
+                    <h3 class="text-xl font-bold mb-2">가을 억새, 새별오름</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">10월 제주의 상징 <strong class="text-amber-700">새별오름</strong>에서 황금빛 억새 물결을 감상합니다. 동창들과 함께 걷는 오름길이 여행의 하이라이트가 됩니다.</p>
+                </div>
+                <div class="bg-blue-50 p-6 rounded-2xl border border-blue-100 shadow-sm">
+                    <div class="text-3xl mb-4">🏝️</div>
+                    <h3 class="text-xl font-bold mb-2">우도와 동쪽 해안</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed"><strong class="text-blue-700">우도 8경</strong>과 자유시간, 드라마 &lt;웰컴투삼달리&gt; 촬영지 <strong class="text-blue-700">오조포구</strong> 둘레길로 제주 동쪽 바다를 온전히 느껴봅니다.</p>
+                </div>
+                <div class="bg-orange-50 p-6 rounded-2xl border border-orange-100 shadow-sm">
+                    <div class="text-3xl mb-4">🍽️</div>
+                    <h3 class="text-xl font-bold mb-2">제주 미식과 힐링</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed"><strong class="text-orange-700">회정식·흑돼지구이</strong>와 흑우불고기정식 등 제주 맛집 코스, 그리고 아로마·한방 족욕으로 여행의 피로를 풉니다.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="preview" class="py-16 bg-slate-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-10">
+                <span class="text-teal-600 font-black tracking-widest text-xs uppercase">Jeju Preview</span>
+                <h2 class="text-3xl font-bold font-title">가을 제주, 미리 만나보기</h2>
+                <p class="text-slate-500 text-sm mt-2">동창 여러분이 함께할 제주의 풍경과 이야기를 미리 읽어보세요.</p>
+            </div>
+            <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
+                    <img src="assets/images/day1-iho.jpg" alt="이호테우 말등대" class="w-full h-44 object-cover">
+                    <div class="p-5">
+                        <h4 class="font-bold text-slate-800 mb-2">이호테우 &amp; 무지개해안도로</h4>
+                        <p class="text-sm text-slate-600 leading-relaxed">빨강·하양 말등대와 알록달록 방호벽이 이어지는 해안 드라이브. 동창 사진의 필수 배경이 됩니다.</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
+                    <img src="assets/images/day1-osulloc.jpg" alt="오설록 녹차밭" class="w-full h-44 object-cover">
+                    <div class="p-5">
+                        <h4 class="font-bold text-slate-800 mb-2">오설록 녹차밭</h4>
+                        <p class="text-sm text-slate-600 leading-relaxed">완만한 언덕에 펼쳐진 녹차 밭과 티 뮤지엄. 제주 서쪽의 여유로운 풍경을 담기 좋습니다.</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
+                    <img src="assets/images/day2-udo.jpg" alt="우도" class="w-full h-44 object-cover">
+                    <div class="p-5">
+                        <h4 class="font-bold text-slate-800 mb-2">우도, 섬 속의 섬</h4>
+                        <p class="text-sm text-slate-600 leading-relaxed">에메랄드빛 바다와 우도 8경. 배편으로 들어가 자유롭게 섬을 둘러보는 하루입니다.</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
+                    <img src="assets/images/day1-saebyeol.jpg" alt="새별오름" class="w-full h-44 object-cover">
+                    <div class="p-5">
+                        <h4 class="font-bold text-slate-800 mb-2">새별오름 억새</h4>
+                        <p class="text-sm text-slate-600 leading-relaxed">가을 제주를 대표하는 억새 군락지. 바람에 흔들리는 금빛 들판이 장관입니다.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="safety" class="py-12 bg-white border-t border-slate-100">
+        <div class="container mx-auto px-4 max-w-5xl">
+            <div class="bg-white rounded-2xl border border-[#004098]/20 shadow-lg overflow-hidden">
+                <div class="bg-[#004098] text-white px-6 py-4 flex flex-wrap justify-between items-center gap-2">
+                    <h3 class="font-bold text-lg font-title"><i class="fa-solid fa-shield-halved mr-2"></i>국내선 탑승 및 안전 안내</h3>
+                    <span class="text-xs bg-white/15 border border-white/25 px-3 py-1 rounded-full">집결·항공편 별도 안내</span>
+                </div>
+                <div class="p-6 md:p-8 space-y-5">
+                    <div class="bg-red-50 border border-red-100 rounded-xl p-4">
+                        <h4 class="font-bold text-red-700 mb-2"><i class="fa-solid fa-id-card mr-1"></i> 신분증 원본 지참 필수</h4>
+                        <p class="text-sm text-red-700 leading-relaxed">국내선 탑승을 위해 <strong>주민등록증, 운전면허증, 여권</strong> 중 하나를 반드시 지참해 주세요. 미지참 시 탑승이 불가합니다.</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div class="border border-slate-200 rounded-xl p-4 text-center"><i class="fa-solid fa-clock text-[#004098] text-2xl mb-2"></i><p class="font-bold">집결 시간 엄수</p><p class="text-slate-500 text-xs mt-1">단체 수속을 위해 공항 집결 시간을 꼭 지켜 주세요.</p></div>
+                        <div class="border border-slate-200 rounded-xl p-4 text-center"><i class="fa-solid fa-bus text-[#004098] text-2xl mb-2"></i><p class="font-bold">전용차량 안전</p><p class="text-slate-500 text-xs mt-1">이동 중 안전벨트 착용과 하차 시 좌우 확인을 부탁드립니다.</p></div>
+                        <div class="border border-slate-200 rounded-xl p-4 text-center"><i class="fa-solid fa-bed text-[#004098] text-2xl mb-2"></i><p class="font-bold">숙소 매너</p><p class="text-slate-500 text-xs mt-1">노블레스관광호텔 이용 시 야간 소음에 유의해 주세요.</p></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="map-section" class="py-12 bg-slate-50 border-t border-slate-200">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold font-title">한눈에 보는 동선 지도</h2>
+                <p id="map-hint" class="text-slate-500 mt-2 text-sm">2박 3일 동안 이동할 핵심 스팟을 확인하세요.</p>
+            </div>
+            <div class="flex flex-wrap justify-center gap-2 mb-6">
+                <button onclick="filterMap('all')" id="btn-map-all" class="map-btn px-4 py-2 rounded-full text-sm font-bold bg-slate-800 text-white">전체 일정</button>
+                <button onclick="filterMap('day1')" id="btn-map-day1" class="map-btn px-4 py-2 rounded-full text-sm font-bold bg-white border border-slate-300 text-slate-600">1일차</button>
+                <button onclick="filterMap('day2')" id="btn-map-day2" class="map-btn px-4 py-2 rounded-full text-sm font-bold bg-white border border-slate-300 text-slate-600">2일차</button>
+                <button onclick="filterMap('day3')" id="btn-map-day3" class="map-btn px-4 py-2 rounded-full text-sm font-bold bg-white border border-slate-300 text-slate-600">3일차</button>
+            </div>
+            <div class="max-w-5xl mx-auto border border-slate-200 rounded-2xl p-1 shadow-lg bg-white"><div id="map"></div></div>
+        </div>
+    </section>
+
+    <section id="schedule" class="py-16 bg-white border-t border-slate-100">
+        <div class="container mx-auto px-4 max-w-4xl">
+            <div class="text-center mb-10 relative">
+                <h2 class="text-3xl font-bold font-title">세부 일정</h2>
+                <p class="text-slate-500 text-sm mt-2">탭을 눌러 일자별 상세 내용을 확인하세요.</p>
+                <button onclick="window.print()" class="mt-6 md:mt-0 md:absolute md:right-0 md:top-1/2 md:-translate-y-1/2 bg-slate-800 hover:bg-slate-700 text-white text-sm font-bold py-2.5 px-5 rounded-xl shadow-md flex items-center gap-2 mx-auto md:mx-0"><i class="fa-solid fa-print"></i> 일정표 인쇄하기</button>
+            </div>
+            <div class="flex overflow-x-auto no-scrollbar gap-2 mb-8 justify-center">
+                <button class="tab-btn active shrink-0 px-5 py-3 rounded-2xl border-2 border-[#004098] bg-[#004098] text-white font-bold text-sm" onclick="openTab(event, 'day1'); filterMap('day1')">1일차 (10/16)</button>
+                <button class="tab-btn shrink-0 px-5 py-3 rounded-2xl border-2 border-slate-200 bg-white text-slate-500 font-bold text-sm" onclick="openTab(event, 'day2'); filterMap('day2')">2일차 (10/17)</button>
+                <button class="tab-btn shrink-0 px-5 py-3 rounded-2xl border-2 border-slate-200 bg-white text-slate-500 font-bold text-sm" onclick="openTab(event, 'day3'); filterMap('day3')">3일차 (10/18)</button>
+            </div>
+            <div class="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden">
+                <div id="day1" class="tab-content p-8">
+                    <h3 class="font-bold text-2xl mb-6 font-title text-[#004098]">✈️ 제주 도착 &amp; 서쪽 감성 코스</h3>
+                    <div class="space-y-6 border-l-2 border-[#004098]/30 ml-3 pl-8">
+                        <div><h4 class="font-bold">공항 도착 · 탑승수속 · 국내선 출발</h4><p class="text-sm text-slate-500 mt-1">집결 시간 및 항공편은 별도 안내드립니다. 신분증을 꼭 챙겨 주세요.</p></div>
+                        <div><h4 class="font-bold">제주공항 도착 &amp; 기사님 미팅</h4></div>
+                        <div><h4 class="font-bold">중식</h4><p class="text-sm text-slate-500 mt-1">흑우불고기정식 또는 갈치조림+고등어구이 또는 해물탕&amp;옥돔구이 중 코스 진행</p></div>
+                        <div><h4 class="font-bold">이호테우 말등대 &amp; 무지개해안도로</h4><p class="text-sm text-slate-500 mt-1">인생샷 포토타임</p></div>
+                        <div><h4 class="font-bold">오설록 녹차밭</h4></div>
+                        <div><h4 class="font-bold">새별오름</h4><p class="text-sm text-slate-500 mt-1">억새로 유명한 오름 산책</p></div>
+                        <div><h4 class="font-bold">석식 (회정식)</h4></div>
+                        <div class="bg-slate-800 text-white p-5 rounded-2xl"><h4 class="font-bold text-amber-300">🏨 노블레스관광호텔 체크인</h4></div>
+                    </div>
+                </div>
+                <div id="day2" class="tab-content hidden p-8">
+                    <h3 class="font-bold text-2xl mb-6 font-title text-[#004098]">🏝️ 우도 &amp; 동쪽 해안 힐링</h3>
+                    <div class="space-y-6 border-l-2 border-emerald-300 ml-3 pl-8">
+                        <div><h4 class="font-bold">호텔 조식 후 관광 출발</h4></div>
+                        <div><h4 class="font-bold">우도 8경 (선박료 포함)</h4><p class="text-sm text-slate-500 mt-1">섬 속의 섬, 우도 내 자유시간</p></div>
+                        <div><h4 class="font-bold">오조포구 둘레길</h4><p class="text-sm text-slate-500 mt-1">드라마 &lt;웰컴투삼달리&gt; 촬영지, 바다를 낀 산책로</p></div>
+                        <div><h4 class="font-bold">아로마족욕 또는 한방족욕 (택 1)</h4></div>
+                        <div><h4 class="font-bold">석식 (흑돼지구이 1인분)</h4></div>
+                        <div class="bg-slate-800 text-white p-5 rounded-2xl"><h4 class="font-bold text-amber-300">🏨 숙소 도착 및 자유시간</h4><p class="text-sm text-slate-300 mt-1">노블레스관광호텔 연박</p></div>
+                    </div>
+                </div>
+                <div id="day3" class="tab-content hidden p-8">
+                    <h3 class="font-bold text-2xl mb-6 font-title text-[#004098]">🛫 아쉬운 작별, 귀경길</h3>
+                    <div class="space-y-6 border-l-2 border-slate-300 ml-3 pl-8">
+                        <div><h4 class="font-bold">호텔 조식</h4></div>
+                        <div><h4 class="font-bold">자체 공항 이동</h4></div>
+                        <div><h4 class="font-bold">제주공항 출발</h4></div>
+                        <div class="bg-blue-50 border border-blue-100 p-5 rounded-2xl text-center"><p class="font-bold text-slate-800">도착 공항 이동 후 해산</p><p class="text-sm text-slate-500 mt-2">동창 여러분, 안전하게 돌아가세요. 좋은 추억 되시길 바랍니다.</p></div>
+                    </div>
+                </div>
+            </div>
+            <p class="text-xs text-red-600 font-bold text-center mt-4 bg-red-50 inline-block px-3 py-1 rounded-full w-full"><i class="fa-solid fa-circle-exclamation"></i> 상기 일정은 항공 및 현지 사정에 따라 변동될 수 있습니다.</p>
+        </div>
+    </section>
+
+    <section id="hotel" class="py-12 bg-slate-50 border-t border-slate-200">
+        <div class="container mx-auto px-4 max-w-4xl">
+            <div class="text-center mb-8"><h2 class="text-2xl font-bold font-title">🏨 숙소 안내</h2></div>
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-md p-8 flex flex-col md:flex-row gap-6 items-center">
+                <div class="w-full md:w-40 h-40 bg-[#004098]/10 rounded-2xl flex items-center justify-center text-5xl shrink-0">🏨</div>
+                <div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">노블레스관광호텔</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">1박차·2박차 연박 투숙 예정입니다. 체크인 후 동창분들과 여유로운 시간을 보내시기 바랍니다. 호텔 전경 이미지는 담당자 확인 후 반영 예정입니다.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="video" class="py-16 bg-slate-900">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-10 text-white">
+                <h2 class="text-2xl font-bold font-title">🎬 한눈에 보는 제주</h2>
+                <p class="text-slate-400 text-sm mt-2">출발 전, 가을 제주의 풍경을 영상과 함께 만나보세요.</p>
+            </div>
+            <div class="max-w-4xl mx-auto">
+                <div class="aspect-video rounded-3xl overflow-hidden shadow-2xl border border-slate-700 bg-black mb-8">
+                    <iframe class="w-full h-full" src="https://www.youtube.com/embed/pNflw8gEAoU?controls=1" title="Jeju Travel" allowfullscreen></iframe>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+                    <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-5"><h4 class="font-bold text-amber-300 mb-2">동창 여행, 다시 만난 인연</h4><p class="text-slate-300 text-sm leading-relaxed">오랜 시간 각자의 길을 걸어온 동창들이 제주라는 섬에서 다시 모입니다. 여행은 단순한 관광을 넘어 추억을 나누고 우정을 새롭게 쌓는 시간이 됩니다.</p></div>
+                    <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-5"><h4 class="font-bold text-blue-300 mb-2">10월 제주, 억새의 계절</h4><p class="text-slate-300 text-sm leading-relaxed">가을 제주는 새별오름을 비롯한 오름과 들판에서 억새가 물결치는 계절입니다. 맑은 하늘과 선선한 바람 속 산책이 여행의 분위기를 완성합니다.</p></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="check" class="py-16 bg-white border-t border-slate-100">
+        <div class="container mx-auto px-4 max-w-5xl">
+            <div class="text-center mb-10"><h2 class="text-2xl font-bold font-title">🎒 준비물 체크리스트</h2></div>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-blue-50 p-6 rounded-2xl border border-blue-100">
+                    <div class="flex justify-between mb-4"><h3 class="font-bold text-[#004098]">✅ 필수 준비물</h3><button onclick="resetChecklist()" class="text-xs underline text-slate-500">초기화</button></div>
+                    <div id="checklist-container" class="space-y-2"></div>
+                </div>
+                <div class="bg-amber-50 p-6 rounded-2xl border border-amber-100">
+                    <h3 class="font-bold text-amber-900 mb-4">📝 나만의 메모</h3>
+                    <textarea id="travel-memo" class="w-full h-64 bg-white p-4 rounded-lg border border-amber-200 resize-none focus:ring-2 focus:ring-amber-400 outline-none" placeholder="동창들과의 약속, 사진 포즈, 기념품 목록 등을 적어두세요."></textarea>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="py-12 bg-slate-50 border-t border-slate-200">
+        <div class="container mx-auto px-4 max-w-3xl text-center">
+            <h2 class="text-2xl font-bold font-title mb-6">📞 연락망</h2>
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-md p-8">
+                <p class="text-xs font-bold text-[#004098] mb-1">투어메이커 행사 담당</p>
+                <p class="text-xl font-bold text-slate-800">대표 이재명</p>
+                <a href="tel:010-9443-7881" class="text-lg text-[#004098] font-bold mt-2 inline-block">010-9443-7881</a>
+                <p class="text-sm text-slate-500 mt-4">현지 가이드 · 미정</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="weather-esg" class="py-16 bg-white border-t border-slate-100">
+        <div class="container mx-auto px-4 max-w-6xl">
+            <h2 class="text-2xl font-bold text-center font-title mb-8">🌦️ 날씨 &amp; ESG</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-blue-50 p-6 rounded-2xl border border-blue-100">
+                    <h3 class="font-bold text-blue-900 mb-4"><i class="fa-solid fa-cloud-sun mr-1"></i> 제주 7일 날씨</h3>
+                    <div id="weather-container" class="flex overflow-x-auto weather-scroll gap-3 no-scrollbar pb-2"><div class="text-sm text-slate-500">불러오는 중...</div></div>
+                    <p class="text-sm text-slate-600 mt-4 bg-white p-3 rounded-lg border border-blue-100"><i class="fa-solid fa-shirt text-blue-500 mr-1"></i>10월 제주는 낮과 밤 일교차가 있습니다. 얇은 겉옷·편한 운동화·우산을 챙기세요.</p>
+                </div>
+                <div class="bg-green-50 p-6 rounded-2xl border border-green-100">
+                    <h3 class="font-bold text-green-900 mb-4"><i class="fa-solid fa-leaf mr-1"></i> ESG 실천</h3>
+                    <div class="grid grid-cols-3 gap-2 text-center mb-4">
+                        <div class="bg-white p-3 rounded-xl border border-green-100"><p class="text-xs text-slate-500">종이 절감</p><p class="font-black text-green-700" id="esg-paper">0장</p></div>
+                        <div class="bg-white p-3 rounded-xl border border-green-100"><p class="text-xs text-slate-500">탄소 감소</p><p class="font-black text-slate-700" id="esg-carbon">0g</p></div>
+                        <div class="bg-white p-3 rounded-xl border border-green-100"><p class="text-xs text-slate-500">물 절약</p><p class="font-black text-blue-700" id="esg-water">0L</p></div>
+                    </div>
+                    <p class="text-xs text-slate-600 bg-white p-3 rounded-lg border border-green-100" id="esg-desc">계산 중...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-10 bg-slate-100 border-t text-center text-sm text-slate-500">
+        <a href="http://tourmaker.kr" target="_blank" class="inline-block mb-4"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgHfgIX70O5k6Anuo0UgALIdaG9jSga9auHu3uyz0uEirylGPAJnjN_qQbvEGMUvPqUQf_g9FMNUHRxlDcUBf4vZ3Mpy4TnA9WxbmzWYK11gt2zuy_Irl4wctNFjcjLyPo0GPXV792o_J7L9guRMuDfeC1gy7USwywjYbECZgzcsHybuGRRAXAnO1eNmP8/s320/logo.png" alt="Tourmaker" class="h-6 mx-auto"></a>
+        <p>[System Powered by TOURMAKER] 동창모임 제주 2박 3일 스마트 가이드북 안내 초안</p>
+        <p class="text-[10px] mt-2 text-slate-400">&copy; 2026 Tourmaker Inc.</p>
+    </footer>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        function showToast(msg) {
+            const t = document.createElement('div');
+            t.textContent = msg;
+            t.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-full shadow-2xl z-[100] text-sm font-bold';
+            document.body.appendChild(t);
+            setTimeout(() => t.remove(), 3000);
+        }
+        function shareLink() {
+            const url = window.location.href;
+            if (navigator.share) navigator.share({ title: '동창모임 제주 2박 3일', url }).catch(() => {});
+            else navigator.clipboard?.writeText(url).then(() => showToast('링크가 복사되었습니다.'));
+        }
+
+        const CHECK_KEY = 'tm_261016_reunion_checklist';
+        const CHECK_ITEMS = [
+            '★신분증★ (주민등록증·운전면허증·여권 원본)',
+            '편한 운동화 (오름·둘레길 산책)',
+            '가벼운 겉옷·우산 (10월 일교차·비 대비)',
+            '선크림·모자·선글라스',
+            '개인 상비약·멀미약',
+            '보조배터리·충전기',
+            '현금·교통카드 (우도 자유시간 등)',
+            '카메라·동창 기념품'
+        ];
+        function renderChecklist() {
+            const c = document.getElementById('checklist-container');
+            if (!c) return;
+            const saved = JSON.parse(localStorage.getItem(CHECK_KEY) || '{}');
+            c.innerHTML = CHECK_ITEMS.map((label, i) => {
+                const id = `chk_${i}`;
+                const imp = label.includes('★');
+                return `<label class="flex items-center gap-2 bg-white border border-blue-100 rounded-lg px-3 py-2 cursor-pointer"><input type="checkbox" id="${id}" ${saved[id] ? 'checked' : ''} class="h-4 w-4 text-[#004098] rounded"><span class="text-sm ${imp ? 'font-bold text-red-600' : 'text-slate-700'}">${label}</span></label>`;
+            }).join('');
+            c.querySelectorAll('input').forEach(cb => cb.addEventListener('change', () => {
+                const s = JSON.parse(localStorage.getItem(CHECK_KEY) || '{}');
+                s[cb.id] = cb.checked;
+                localStorage.setItem(CHECK_KEY, JSON.stringify(s));
+            }));
+        }
+        function resetChecklist() { if (confirm('초기화할까요?')) { localStorage.removeItem(CHECK_KEY); renderChecklist(); } }
+        renderChecklist();
+        (function() {
+            const m = document.getElementById('travel-memo');
+            const K = 'tm_261016_reunion_memo';
+            if (!m) return;
+            m.value = localStorage.getItem(K) || '';
+            m.addEventListener('input', () => localStorage.setItem(K, m.value));
+        })();
+
+        (function initDateLogic() {
+            const today = new Date(); today.setHours(0,0,0,0);
+            const start = new Date('2026-10-16'), end = new Date('2026-10-18');
+            const badge = document.getElementById('d-day-badge');
+            const heroDesc = document.getElementById('hero-desc');
+            const heroDate = document.getElementById('hero-date');
+            if (!badge) return;
+            badge.classList.remove('hidden');
+            if (today < start) {
+                badge.textContent = `D-${Math.ceil((start - today) / 86400000)}`;
+            } else if (today <= end) {
+                const d = Math.floor((today - start) / 86400000) + 1;
+                badge.textContent = `📍 ${d}일차 진행중`;
+                if (heroDesc) heroDesc.textContent = `동창모임 제주 여행 ${d}일차가 진행 중입니다.`;
+            } else {
+                badge.textContent = '🏁 여정 종료';
+                if (heroDate) heroDate.textContent = '여정이 종료되었습니다.';
+                if (heroDesc) heroDesc.textContent = '좋은 추억으로 오래 간직해 주세요.';
+            }
+        })();
+
+        (function initESG() {
+            const people = 25;
+            document.getElementById('esg-paper').textContent = `${people * 6}장`;
+            document.getElementById('esg-carbon').textContent = `${people * 28}g`;
+            document.getElementById('esg-water').textContent = `${people * 55}L`;
+            document.getElementById('esg-desc').innerHTML = `스마트 가이드북으로 약 <strong>${((people*6)/500).toFixed(1)}그루</strong> 나무 심기 효과. 종이 일정표 대신 디지털 안내로 ESG를 실천합니다.`;
+        })();
+
+        async function fetchWeather() {
+            const c = document.getElementById('weather-container');
+            if (!c) return;
+            try {
+                const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=33.4996&longitude=126.5312&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=Asia%2FSeoul');
+                const data = await res.json();
+                const codes = {0:'☀️',1:'🌤️',2:'⛅',3:'☁️',61:'🌧️',63:'🌧️',80:'🌦️',95:'⛈️'};
+                let html = '';
+                for (let i = 0; i < 7; i++) {
+                    const d = new Date(data.daily.time[i]);
+                    const day = ['일','월','화','수','목','금','토'][d.getDay()];
+                    html += `<div class="weather-card shrink-0 bg-white p-3 rounded-xl border border-blue-100 text-center w-24"><p class="text-xs font-bold text-slate-500">${d.getMonth()+1}/${d.getDate()} (${day})</p><div class="text-2xl my-1">${codes[data.daily.weathercode[i]] || '☁️'}</div><p class="text-[11px] font-bold"><span class="text-blue-500">${Math.round(data.daily.temperature_2m_min[i])}°</span> | <span class="text-red-500">${Math.round(data.daily.temperature_2m_max[i])}°</span></p></div>`;
+                }
+                c.innerHTML = html;
+            } catch (e) { c.innerHTML = '<p class="text-sm text-red-500">날씨 로드 실패</p>'; }
+        }
+        fetchWeather();
+
+        function openTab(evt, tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-[#004098]', 'text-white', 'border-[#004098]');
+                btn.classList.add('bg-white', 'text-slate-500', 'border-slate-200');
+            });
+            document.getElementById(tabId)?.classList.remove('hidden');
+            evt.currentTarget.classList.add('bg-[#004098]', 'text-white', 'border-[#004098]');
+            evt.currentTarget.classList.remove('bg-white', 'text-slate-500', 'border-slate-200');
+        }
+
+        let mapInited = false, currentMap = null, dayLayers = {}, allSpots = {};
+        const mapHints = { all: '2박 3일 전체 동선입니다.', day1: '1일차: 제주 도착 · 이호테우 · 오설록 · 새별오름', day2: '2일차: 우도 · 오조포구 · 족욕', day3: '3일차: 제주공항 출발' };
+
+        function initMap() {
+            if (mapInited || !window.L) return;
+            mapInited = true;
+            const spots = {
+                airport: [33.5104, 126.4913],
+                iho: [33.4984, 126.4526],
+                osulloc: [33.3059, 126.2895],
+                saebyeol: [33.3622, 126.5195],
+                hotel: [33.4850, 126.4920],
+                udo: [33.5064, 126.9534],
+                ojo: [33.5389, 126.8678],
+                footbath: [33.4990, 126.8200]
+            };
+            allSpots = spots;
+            currentMap = L.map('map', { scrollWheelZoom: false });
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { maxZoom: 15 }).addTo(currentMap);
+            const mk = (ll, title, color, emoji, idx) => L.marker(ll, { icon: L.divIcon({ className: 'custom-marker', html: `<div style="animation:popIn .5s forwards ${idx*0.15}s;background:${color};width:32px;height:32px;border-radius:50%;border:2px solid #fff;color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;opacity:0">${emoji}</div>`, iconSize: [32,32], iconAnchor: [16,32] }) }).bindTooltip(title, { direction: 'top', offset: [0,-32] });
+            const m = {
+                a: mk(spots.airport, '제주공항', '#1e293b', '✈️', 0),
+                i: mk(spots.iho, '이호테우', '#ef4444', '🐎', 1),
+                o: mk(spots.osulloc, '오설록', '#22c55e', '🍵', 2),
+                s: mk(spots.saebyeol, '새별오름', '#f59e0b', '🌾', 3),
+                h: mk(spots.hotel, '노블레스관광호텔', '#004098', '🏨', 4),
+                u: mk(spots.udo, '우도', '#3b82f6', '🏝️', 1),
+                j: mk(spots.ojo, '오조포구', '#06b6d4', '🌊', 2),
+                f: mk(spots.footbath, '족욕체험', '#a855f7', '💆', 3)
+            };
+            const line = (pts, color) => L.polyline(pts, { color, weight: 4, opacity: 0.85 });
+            dayLayers = {
+                day1: L.layerGroup([m.a, m.i, m.o, m.s, m.h, line([spots.airport, spots.iho, spots.osulloc, spots.saebyeol, spots.hotel], '#f97316')]),
+                day2: L.layerGroup([m.h, m.u, m.j, m.f, m.h, line([spots.hotel, spots.udo, spots.ojo, spots.footbath, spots.hotel], '#3b82f6')]),
+                day3: L.layerGroup([m.h, m.a, line([spots.hotel, spots.airport], '#64748b')])
+            };
+            filterMap('all');
+        }
+
+        window.filterMap = function(day) {
+            if (!currentMap) return;
+            document.getElementById('map-hint').textContent = mapHints[day] || mapHints.all;
+            document.querySelectorAll('.map-btn').forEach(btn => { btn.classList.remove('bg-slate-800', 'text-white'); btn.classList.add('bg-white', 'text-slate-600'); });
+            const btn = document.getElementById('btn-map-' + day);
+            if (btn) { btn.classList.add('bg-slate-800', 'text-white'); btn.classList.remove('bg-white', 'text-slate-600'); }
+            Object.values(dayLayers).forEach(l => currentMap.removeLayer(l));
+            if (day === 'all') {
+                Object.values(dayLayers).forEach(l => l.addTo(currentMap));
+                currentMap.fitBounds(L.latLngBounds(Object.values(allSpots)), { padding: [30, 30] });
+            } else {
+                dayLayers[day].addTo(currentMap);
+                const bounds = { day1: [allSpots.airport, allSpots.iho, allSpots.osulloc, allSpots.saebyeol, allSpots.hotel], day2: [allSpots.hotel, allSpots.udo, allSpots.ojo, allSpots.footbath], day3: [allSpots.hotel, allSpots.airport] };
+                currentMap.fitBounds(L.latLngBounds(bounds[day]), { padding: [50, 50] });
+            }
+        };
+
+        const io = new IntersectionObserver(e => { if (e[0].isIntersecting) { initMap(); io.disconnect(); } }, { threshold: 0.1 });
+        const ms = document.getElementById('map-section');
+        if (ms) io.observe(ms);
+    </script>
+</body>
+</html>

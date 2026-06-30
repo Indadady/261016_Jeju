@@ -9,4 +9,4 @@
 | day1-saebyeol.jpg | Same as hero | CC BY-SA 4.0 |
 | day2-udo.jpg | [Commons: Udo, Jeju Province, South Korea 03.jpg](https://commons.wikimedia.org/wiki/File:Udo,_Jeju_Province,_South_Korea_03.jpg) | CC BY-SA 4.0 |
 
-`hotel.jpg` — 담당자 제공 URL 확인 후 반영 예정 (노블레스관광호텔)
+| hotel.jpg | 담당자 제공 (네이버 플레이스) — 노블레스관광호텔 전경 | — |

@@ -2,11 +2,11 @@
 
 | File | Source | License |
 |------|--------|---------|
-| hero.jpg | [Commons: Saebyeol Oreum in autumn](https://commons.wikimedia.org/wiki/File:Saebyeol_Oreum_in_autumn.jpg) | CC |
-| og-thumb.jpg | [Commons: Iho Teu Beach Lighthouse](https://commons.wikimedia.org/wiki/File:Iho_Teu_Beach_Lighthouse.jpg) | CC |
-| day1-iho.jpg | Same as og-thumb | CC |
-| day1-osulloc.jpg | [Commons: Osulloc tea fields](https://commons.wikimedia.org/wiki/File:Osulloc_tea_fields.jpg) | CC |
-| day1-saebyeol.jpg | Same as hero | CC |
-| day2-udo.jpg | [Commons: Udo Island Jeju](https://commons.wikimedia.org/wiki/File:Udo_Island_Jeju.jpg) | CC |
+| hero.jpg | [Commons: Saebyeol Oreum 04.jpg](https://commons.wikimedia.org/wiki/File:Saebyeol_Oreum_04.jpg) | CC BY-SA 4.0 |
+| og-thumb.jpg | [Commons: Dragon lighthouse (5223468346).jpg](https://commons.wikimedia.org/wiki/File:Dragon_lighthouse_(5223468346).jpg) (이호테우항 말등대) | CC BY 2.0 |
+| day1-iho.jpg | Same as og-thumb | CC BY 2.0 |
+| day1-osulloc.jpg | [Commons: Osulloc Tea Museum & Fields, Jeju.jpg](https://commons.wikimedia.org/wiki/File:Osulloc_Tea_Museum_%26_Fields,_Jeju.jpg) | CC BY-SA 2.0 |
+| day1-saebyeol.jpg | Same as hero | CC BY-SA 4.0 |
+| day2-udo.jpg | [Commons: Udo, Jeju Province, South Korea 03.jpg](https://commons.wikimedia.org/wiki/File:Udo,_Jeju_Province,_South_Korea_03.jpg) | CC BY-SA 4.0 |
 
 `hotel.jpg` — 담당자 제공 URL 확인 후 반영 예정 (노블레스관광호텔)
